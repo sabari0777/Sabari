@@ -3,9 +3,8 @@ import streamlit as st
 import joblib
 import numpy as np
 
-# Load saved model and scaler
+# Load saved model
 model = joblib.load("fraud_model.pkl")
-scaler = joblib.load("scaler.pkl")
 
 # Page config
 st.set_page_config(page_title="AI Credit Card Fraud Detector", layout="centered")
@@ -34,13 +33,12 @@ if st.button("Check for Fraud"):
         "Other": 4
     }[profession]
 
-    # Build input array
+    # Build input array (without scaling)
     input_data = np.array([[profession_encoded, income]])
-    input_scaled = scaler.transform(input_data)
 
     # Predict
-    prediction = model.predict(input_scaled)[0]
-    probability = model.predict_proba(input_scaled)[0][1]
+    prediction = model.predict(input_data)[0]
+    probability = model.predict_proba(input_data)[0][1]
 
     if prediction == 1:
         st.error(f"**Fraud Detected!** (Confidence: {probability:.2%})")
